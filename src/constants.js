@@ -1,0 +1,1 @@
+export const DB_NAME = "Naman's_DB";
