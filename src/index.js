@@ -1,24 +1,21 @@
-import mongoose from "mongoose";
-import { DB_NAME } from "./constants";
-import express from "express";
+import ConnectDB from "./DB/index.js";
+import dotenv from "dotenv";
+import { app } from "./app.js"; 
 
-// FIRST APPROACH 
+dotenv.config({
+    path: "./env"
+})
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// FIRST APPROACH is in DB folder in index file
+ConnectDB()
+.then(() => {
+    app.listen(process.env.PORT || 3000, () => {
+        console.log(`Server is running on the Port: ${process.env.PORT}`)
+    } )
+})
+.catch((err) => {
+    console.log("MongoDB Connection Failed  !!! ", err)
+})
 // SECOND APPROACH
 // const app = express();
 // ;( async() => {
