@@ -1,4 +1,6 @@
 import mongooes, {Schema} from "mongoose";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 
 const userSchema = new Schema(
     {
@@ -24,10 +26,34 @@ const userSchema = new Schema(
             index: true
         },
         avtar: {
-            type: String // useing cloudenary url as string
-        }  
-
+            type: String, // useing cloudenary url as string
+            required: true
+        },
+        CoverImage: {
+            type: String, // useing cloudenary url as string
+        },
+        watchHistory: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: "Videos"
+            }
+        ],
+        password: {
+            type: String,
+            required: [true, "Password is Required"]
+        },
+        refreshTokens: {
+            type: String
+        }
+    },
+    {
+        timestamps: true
     }
-)
+);
+
+// middleWare
+userSchema.pre("save", async function(next){
+
+})
 
 export const User = mongooes.model("User", userSchema);
