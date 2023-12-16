@@ -54,6 +54,16 @@ const userSchema = new Schema(
 // middleWare
 userSchema.pre("save", async function(next){
 
+// This will Encrypt the password    
+     
+    if(!this.isModified("password")) return next();
+
+    this.password = bcrypt.hash(this.password, 10)
+    next();
 })
+
+userSchema.methods.isPasswordCorrect = async function(password) {
+    return await bcrypt.compare(password, this.password);
+}
 
 export const User = mongooes.model("User", userSchema);
