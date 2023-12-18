@@ -1,8 +1,8 @@
-import asyncHeandler from "../utils/asyncHeandler.js";
+import {asyncHeandler} from "../utils/asyncHeandler.js";
 
 const registerUser = asyncHeandler( async ( req, res ) => {
     res.status(200).json({
-        message: "ok"
+        message: "Backend With Chai Or Code"
     })
 } )
 

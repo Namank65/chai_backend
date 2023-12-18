@@ -1,10 +1,10 @@
 const asyncHeandler = (requestHandler) => {
-    (req , res, next) => {
+    return (req , res, next) => {
         Promise.resolve(requestHandler(req, res, next)).catch((err) => next(err))
     }
 }
 
-export {asyncHeandler}
+export {asyncHeandler};
 
 
 // Profectional code base aproch also like this...
