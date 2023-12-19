@@ -1,6 +1,7 @@
 import {asyncHeandler} from "../utils/asyncHeandler.js";
 import {ApiError} from "../utils/apiError.js";
 import  {User}  from "../models/User.Model.js";
+import {uploadCloudinary} from "../utils/cloudinary.js";
 
 const registerUser = asyncHeandler( async ( req, res ) => {
     // git user details from frontend
@@ -31,7 +32,26 @@ const registerUser = asyncHeandler( async ( req, res ) => {
 
     if(exestingUser) {
         throw new ApiError(409, "User With Email Or User Name Already Exiest")
-    }
+    };
+
+    const avatarLocalPath = req.files?.avatar[0]?.path;
+    const coverimageLocalPath = req.files?.coverimage[0]?.path;
+
+    if (!avatarLocalPath) {
+        throw new ApiError(400, "Avatar File Is Required")
+    };
+
+    const avatar = await uploadCloudinary(avatarLocalPath);
+    const coverimage = await uploadCloudinary(coverimageLocalPath);
+
+    if (!avatar) {
+        throw new ApiError(400, "Avatar File Is Required")
+    };
+
+    User.create({
+        fullname,
+        avtar: avatar.url
+    })
 } )
 
 export {registerUser};
