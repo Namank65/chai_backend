@@ -16,6 +16,8 @@ ConnectDB()
 .catch((err) => {
     console.log("MongoDB Connection Failed  !!! ", err)
 })
+
+
 // SECOND APPROACH
 // const app = express();
 // ;( async() => {

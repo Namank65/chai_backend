@@ -27,7 +27,7 @@ const registerUser = asyncHeandler( async ( req, res ) => {
     if (!email.includes("@")) throw new ApiError;
 
 
-    const exestingUser = User.findOne({
+    const exestingUser = await User.findOne({
         $or: [{userName}, {email}]
     })
 
@@ -51,7 +51,7 @@ const registerUser = asyncHeandler( async ( req, res ) => {
 
     const user = await User.create({
         fullname,
-        avtar: avatar.url,
+        avatar: avatar.url,
         coverimage: coverimage?.url || "",
         password,
         email,

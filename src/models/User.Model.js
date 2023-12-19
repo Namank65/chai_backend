@@ -25,11 +25,11 @@ const userSchema = new Schema(
             trim: true,
             index: true
         },
-        avtar: {
+        avatar: {
             type: String, // useing cloudenary url as string
             required: true
         },
-        CoverImage: {
+        coverimage: {
             type: String, // useing cloudenary url as string
         },
         watchHistory: [
