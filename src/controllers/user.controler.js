@@ -2,6 +2,7 @@ import {asyncHeandler} from "../utils/asyncHeandler.js";
 import {ApiError} from "../utils/apiError.js";
 import  {User}  from "../models/User.Model.js";
 import {uploadCloudinary} from "../utils/cloudinary.js";
+import {ApiResponce} from "../utils/apiResponce.js";
 
 const registerUser = asyncHeandler( async ( req, res ) => {
     // git user details from frontend
@@ -18,7 +19,7 @@ const registerUser = asyncHeandler( async ( req, res ) => {
     console.log(`Email: ${email}`, `UserName: ${userName}`, `Fullname: ${fullname}`, `Password: ${password}`);
 
     if (
-        [userName, email, fullname, password].some((field) => field.trim() === "")
+        [userName, email, fullname, password].some((field) => field?.trim() === "")
     ) {
         throw new ApiError(400, "All Field Are Required")
     };
@@ -48,10 +49,27 @@ const registerUser = asyncHeandler( async ( req, res ) => {
         throw new ApiError(400, "Avatar File Is Required")
     };
 
-    User.create({
+    const user = await User.create({
         fullname,
-        avtar: avatar.url
-    })
+        avtar: avatar.url,
+        coverimage: coverimage?.url || "",
+        password,
+        email,
+        userName: userName.toLowerCase()
+    });
+
+    const CreatedUser = await User.findById(user._id).select(
+        "-password -refreshTokens"
+    );
+
+    if (!CreatedUser) {
+        throw new ApiError(500, "OOPS, Something went Wrong while registering a user!")
+    };
+
+    return res.status(201).json(
+        new ApiResponce(200, CreatedUser, "User Registered Successfully")
+    )
+
 } )
 
 export {registerUser};
