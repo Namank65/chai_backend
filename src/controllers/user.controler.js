@@ -1,10 +1,10 @@
-import {asyncHeandler} from "../utils/asyncHeandler.js";
-import {ApiError} from "../utils/apiError.js";
-import  {User}  from "../models/User.Model.js";
-import {uploadCloudinary} from "../utils/cloudinary.js";
-import {ApiResponce} from "../utils/apiResponce.js";
+import { asyncHeandler } from "../utils/asyncHeandler.js";
+import { ApiError } from "../utils/apiError.js";
+import { User } from "../models/User.Model.js";
+import { uploadCloudinary } from "../utils/cloudinary.js";
+import { ApiResponce } from "../utils/apiResponce.js";
 
-const registerUser = asyncHeandler( async ( req, res ) => {
+const registerUser = asyncHeandler(async (req, res) => {
     // git user details from frontend
     //validation not empty
     //check if user already exist (username or email)
@@ -15,7 +15,7 @@ const registerUser = asyncHeandler( async ( req, res ) => {
     //check for user creation 
     //return responce
 
-    const {userName, email, fullname, password} = req.body;
+    const { userName, email, fullname, password } = req.body;
     console.log(`Email: ${email}`, `UserName: ${userName}`, `Fullname: ${fullname}`, `Password: ${password}`);
 
     if (
@@ -28,10 +28,10 @@ const registerUser = asyncHeandler( async ( req, res ) => {
 
 
     const exestingUser = await User.findOne({
-        $or: [{userName}, {email}]
+        $or: [{ userName }, { email }]
     })
 
-    if(exestingUser) {
+    if (exestingUser) {
         throw new ApiError(409, "User With Email Or User Name Already Exiest")
     };
 
@@ -39,7 +39,7 @@ const registerUser = asyncHeandler( async ( req, res ) => {
     // const coverimageLocalPath = req.files?.coverimage[0]?.path;
 
     let coverimageLocalPath;
-    if(req.files && Array.isArray(req.files.coverimage) && req.files.coverimage.length > 0) {
+    if (req.files && Array.isArray(req.files.coverimage) && req.files.coverimage.length > 0) {
         coverimageLocalPath = req.files.coverimage[0].path
     }
 
@@ -76,6 +76,27 @@ const registerUser = asyncHeandler( async ( req, res ) => {
         new ApiResponce(200, CreatedUser, "User Registered Successfully")
     )
 
-} );
+});
 
-export {registerUser};
+const LoginUser = asyncHeandler(async (req, res) => {
+    // req data from body;
+    // validate of username and email 
+    // find the user 
+    // check the password
+    // send access and refresh token to the user
+    // send cookie
+    // lastly send the respos of success 
+
+    const {email, userName, password} = req.body;
+
+    if(!userName || !email){
+        throw new ApiError(400, "Username Or Email Is Must Required")
+    };
+
+})
+
+export {
+    registerUser,
+    LoginUser
+
+};
