@@ -13,7 +13,7 @@ const GenerateAccessAndRefreshTokens = async (userId) => {
         user.refreshTokens = refreshToken
         await user.save({ validateBeforeSave: false })
 
-        return {accessToken, refreshToken};
+        return { accessToken, refreshToken };
 
     } catch (error) {
         throw new ApiError(401, "Something Went Wrong While Generating Access and Refresh Tokens")
@@ -123,7 +123,33 @@ const LoginUser = asyncHeandler(async (req, res) => {
         throw new ApiError(404, "Invalid User Credentials")
     };
 
-   const {accessToken, refreshToken} = await GenerateAccessAndRefreshTokens(user._id);
+    const { accessToken, refreshToken } = await GenerateAccessAndRefreshTokens(user._id);
+
+    const loggedInUser = await User.findById(user._id).select("-password -refreshTokens");
+
+    const options = {
+        httpOnly: true,
+        secure: true
+    }
+
+    return res
+    .status(200)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .json(
+        new ApiResponce(
+            200,
+            {
+                user: loggedInUser, accessToken, refreshToken
+            },
+            "User LoggedIn successfully"
+        )
+    )
+
+})
+
+const LogoutUser = asyncHeandler(async (req, res) => {
+    
 })
 
 export {
