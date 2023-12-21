@@ -4,6 +4,22 @@ import { User } from "../models/User.Model.js";
 import { uploadCloudinary } from "../utils/cloudinary.js";
 import { ApiResponce } from "../utils/apiResponce.js";
 
+const GenerateAccessAndRefreshTokens = async (userId) => {
+    try {
+        const user = await User.findById(userId);
+        const accessToken = generateAccessToken();
+        const refreshToken = generateRefreshToken();
+
+        user.refreshTokens = refreshToken
+        await user.save({ validateBeforeSave: false })
+
+        return {accessToken, refreshToken};
+
+    } catch (error) {
+        throw new ApiError(401, "Something Went Wrong While Generating Access and Refresh Tokens")
+    }
+}
+
 const registerUser = asyncHeandler(async (req, res) => {
     // git user details from frontend
     //validation not empty
@@ -87,12 +103,27 @@ const LoginUser = asyncHeandler(async (req, res) => {
     // send cookie
     // lastly send the respos of success 
 
-    const {email, userName, password} = req.body;
+    const { email, userName, password } = req.body;
 
-    if(!userName || !email){
+    if (!userName || !email) {
         throw new ApiError(400, "Username Or Email Is Must Required")
     };
 
+    const user = User.findOne({
+        $or: [{ userName }, { email }]
+    });
+
+    if (!user) {
+        throw new ApiError(404, "User Does Not Exist")
+    };
+
+    const isPasswordValid = user.isPasswordCorrect(password);
+
+    if (!isPasswordValid) {
+        throw new ApiError(404, "Invalid User Credentials")
+    };
+
+   const {accessToken, refreshToken} = await GenerateAccessAndRefreshTokens(user._id);
 })
 
 export {
