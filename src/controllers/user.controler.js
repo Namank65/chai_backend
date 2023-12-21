@@ -105,7 +105,7 @@ const LoginUser = asyncHeandler(async (req, res) => {
 
     const { email, userName, password } = req.body;
 
-    if (!userName || !email) {
+    if (!userName && !email) {
         throw new ApiError(400, "Username Or Email Is Must Required")
     };
 
@@ -117,7 +117,7 @@ const LoginUser = asyncHeandler(async (req, res) => {
         throw new ApiError(404, "User Does Not Exist")
     };
 
-    const isPasswordValid = user.isPasswordCorrect(password);
+    const isPasswordValid = await user.isPasswordCorrect(password);
 
     if (!isPasswordValid) {
         throw new ApiError(404, "Invalid User Credentials")
@@ -133,27 +133,53 @@ const LoginUser = asyncHeandler(async (req, res) => {
     }
 
     return res
-    .status(200)
-    .cookie("accessToken", accessToken, options)
-    .cookie("refreshToken", refreshToken, options)
-    .json(
-        new ApiResponce(
-            200,
-            {
-                user: loggedInUser, accessToken, refreshToken
-            },
-            "User LoggedIn successfully"
+        .status(200)
+        .cookie("accessToken", accessToken, options)
+        .cookie("refreshToken", refreshToken, options)
+        .json(
+            new ApiResponce(
+                200,
+                {
+                    user: loggedInUser, accessToken, refreshToken
+                },
+                "User LoggedIn successfully"
+            )
         )
-    )
 
 })
 
 const LogoutUser = asyncHeandler(async (req, res) => {
-    
+
+    await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $set: {
+                refreshToken: undefined
+            }
+        },
+        {
+            new: true
+        }
+    )
+
+    const options = {
+        httpOnly: true,
+        secure: true
+    };
+
+    return res
+        .status(200)
+        .clearCookie("accessToken", options)
+        .clearCookie("refreshToken", options)
+        .json(
+            new ApiResponce(200, {}, "User Logged Out Successfully")
+        )
+
 })
 
 export {
     registerUser,
-    LoginUser
+    LoginUser,
+    LogoutUser
 
 };
