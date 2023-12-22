@@ -117,7 +117,7 @@ const LoginUser = asyncHeandler(async (req, res) => {
         throw new ApiError(404, "User Does Not Exist")
     };
 
-    const isPasswordValid = await user.isPasswordCorrect(password);
+    const isPasswordValid = await user.isPasswordCorrect(password)
 
     if (!isPasswordValid) {
         throw new ApiError(404, "Invalid User Credentials")
