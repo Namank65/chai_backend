@@ -6,9 +6,9 @@ import { ApiResponce } from "../utils/apiResponce.js";
 
 const GenerateAccessAndRefreshTokens = async (userId) => {
     try {
-        const user = await User.findById(userId);
-        const accessToken = user.generateAccessToken();
-        const refreshToken = user.generateRefreshToken();
+        const user = await User.findById(userId)
+        const accessToken = user.generateAccessToken()
+        const refreshToken = user.generateRefreshToken()
 
         user.refreshTokens = refreshToken
         await user.save({ validateBeforeSave: false })
@@ -32,7 +32,7 @@ const registerUser = asyncHeandler(async (req, res) => {
     //return responce
 
     const { userName, email, fullname, password } = req.body;
-    console.log(`Email: ${email}`, `UserName: ${userName}`, `Fullname: ${fullname}`, `Password: ${password}`);
+    // console.log(`Email: ${email}`, `UserName: ${userName}`, `Fullname: ${fullname}`, `Password: ${password}`);
 
     if (
         [userName, email, fullname, password].some((field) => field?.trim() === "")
