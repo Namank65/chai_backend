@@ -7,13 +7,13 @@ import { ApiResponce } from "../utils/apiResponce.js";
 const GenerateAccessAndRefreshTokens = async (userId) => {
     try {
         const user = await User.findById(userId);
-        const accessToken = generateAccessToken();
-        const refreshToken = generateRefreshToken();
+        const accessToken = user.generateAccessToken();
+        const refreshToken = user.generateRefreshToken();
 
         user.refreshTokens = refreshToken
         await user.save({ validateBeforeSave: false })
 
-        return { accessToken, refreshToken };
+        return { accessToken, refreshToken }
 
     } catch (error) {
         throw new ApiError(401, "Something Went Wrong While Generating Access and Refresh Tokens")
@@ -120,7 +120,7 @@ const LoginUser = asyncHeandler(async (req, res) => {
     const isPasswordValid = await user.isPasswordCorrect(password)
 
     if (!isPasswordValid) {
-        throw new ApiError(404, "Invalid User Credentials")
+        throw new ApiError(401, "Invalid User Credentials")
     };
 
     const { accessToken, refreshToken } = await GenerateAccessAndRefreshTokens(user._id);
@@ -146,7 +146,7 @@ const LoginUser = asyncHeandler(async (req, res) => {
             )
         )
 
-})
+});
 
 const LogoutUser = asyncHeandler(async (req, res) => {
 
