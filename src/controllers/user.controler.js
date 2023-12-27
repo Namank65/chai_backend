@@ -18,7 +18,7 @@ const GenerateAccessAndRefreshTokens = async (userId) => {
     } catch (error) {
         throw new ApiError(401, "Something Went Wrong While Generating Access and Refresh Tokens")
     }
-}
+};
 
 const registerUser = asyncHeandler(async (req, res) => {
     // git user details from frontend
@@ -45,7 +45,7 @@ const registerUser = asyncHeandler(async (req, res) => {
 
     const exestingUser = await User.findOne({
         $or: [{ userName }, { email }]
-    })
+    });
 
     if (exestingUser) {
         throw new ApiError(409, "User With Email Or User Name Already Exiest")
@@ -57,7 +57,7 @@ const registerUser = asyncHeandler(async (req, res) => {
     let coverimageLocalPath;
     if (req.files && Array.isArray(req.files.coverimage) && req.files.coverimage.length > 0) {
         coverimageLocalPath = req.files.coverimage[0].path
-    }
+    };
 
     if (!avatarLocalPath) {
         throw new ApiError(400, "Avatar File Is Required")
