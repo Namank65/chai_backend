@@ -4,7 +4,7 @@ import { app } from "./app.js";
 
 dotenv.config({
     path: "./env"
-})
+});
 
 // FIRST APPROACH is in DB folder in index file
 ConnectDB()
@@ -15,7 +15,7 @@ ConnectDB()
 })
 .catch((err) => {
     console.log("MongoDB Connection Failed  !!! ", err)
-})
+});
 
 
 // SECOND APPROACH
