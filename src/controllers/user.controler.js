@@ -160,7 +160,7 @@ const LogoutUser = asyncHeandler(async (req, res) => {
         {
             new: true
         }
-    )
+    );
 
     const options = {
         httpOnly: true,
@@ -173,7 +173,7 @@ const LogoutUser = asyncHeandler(async (req, res) => {
         .clearCookie("refreshToken", options)
         .json(
             new ApiResponce(200, {}, "User Logged Out Successfully")
-        )
+        );
 
 });
 
