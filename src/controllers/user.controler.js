@@ -167,6 +167,8 @@ const LogoutUser = asyncHeandler(async (req, res) => {
         secure: true
     };
 
+    let startNewCode;
+
     return res
         .status(200)
         .clearCookie("accessToken", options)
