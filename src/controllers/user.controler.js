@@ -223,7 +223,7 @@ const refreshAccessToken = asyncHeandler(async (req, res) => {
         new ApiError(401, error?.message || "Invalid Refresh Token")
     }
 
-})
+});
 
 export {
     registerUser,
