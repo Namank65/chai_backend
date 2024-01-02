@@ -245,11 +245,94 @@ const changeCurrentPassword = asyncHeandler(async (req, res) => {
         )
 });
 
-const getCurrentUser = asyncHeandler(async(req, res) => {
+const getCurrentUser = asyncHeandler(async (req, res) => {
     return res
-    .status(200)
-    .json(200, req.user, "Current User Fetched Successfully")
-    
+        .status(200)
+        .json(200, req.user, "Current User Fetched Successfully")
+
+});
+
+const updateAccountDetails = asyncHeandler(async (req, res) => {
+    const { fullname, userName } = req.body
+
+    if (!fullname || !userName) {
+        throw new ApiError(401, "All Feilds Are Mandatory")
+    }
+
+    const user = await User.findByIdAndUpdate(
+        req.user?._id,
+        {
+            $set: {
+                fullname,
+                email
+            }
+        },
+        {
+            new: true
+        }
+    ).select("-password")
+
+    return res
+        .status(200)
+        .json(new ApiResponce(
+            200, user, "Account Details Updated Successfully"
+        ))
+
+});
+
+const updatedUserAvatar = asyncHeandler(async (req, res) => {
+    const avatarLocalPath = req.file?.path
+
+    if (!avatarLocalPath) {
+        throw new ApiError(401, "Avatar file is missing")
+    }
+
+    const avatar = await uploadCloudinary(avatarLocalPath)
+
+    if (!avatar.url) {
+        throw new ApiError(401, "Error while uploding your avatar")
+    }
+
+    const user = await User.findByIdAndUpdate(
+        req.user?._id,
+        {
+            $set: avatar.url
+        },
+        { new: true }
+    ).select("-password")
+
+    return res
+        .status(200)
+        .json(
+            ApiResponce(200, user, "Cover Image Updated Successfully")
+        )
+});
+const updatedUserCoverImage = asyncHeandler(async (req, res) => {
+    const coverImageLocalPath = req.file?.path
+
+    if (!coverImageLocalPath) {
+        throw new ApiError(401, "Cover Image file is missing")
+    }
+
+    const coverimage = await uploadCloudinary(coverImageLocalPath)
+
+    if (!coverimage.url) {
+        throw new ApiError(401, "Error while uploding your coverimage")
+    }
+
+    const user = await User.findByIdAndUpdate(
+        req.user?._id,
+        {
+            $set: avatar.url
+        },
+        { new: true }
+    ).select("-password")
+
+    return res
+        .status(200)
+        .json(
+            ApiResponce(200, user, "Cover Image Updated Successfully")
+        )
 });
 
 export {
@@ -258,6 +341,8 @@ export {
     LogoutUser,
     refreshAccessToken,
     changeCurrentPassword,
-    getCurrentUser
-
+    getCurrentUser,
+    updateAccountDetails,
+    updatedUserAvatar,
+    updatedUserCoverImage
 };
