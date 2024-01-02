@@ -190,24 +190,24 @@ const refreshAccessToken = asyncHeandler(async (req, res) => {
         const decodedToken = jwt.verify(
             incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET
         )
-    
+
         const user = await User.findById(decodedToken._id)
-    
+
         if (!user) {
             throw new ApiError(402, "Invalid refresh Token")
         }
-    
+
         if (incomingRefreshToken !== user?.refreshTokens) {
             throw new ApiError(401, "Refresh Token Is Expired Or Used Already")
         }
-    
+
         const options = {
             httpOnly: true,
             secure: true
         }
-    
+
         const { accessToken, NewRefreshToken } = await GenerateAccessAndRefreshTokens(user._id)
-    
+
         return res
             .status(200)
             .cookie("accessToken", accessToken, options)
@@ -225,10 +225,39 @@ const refreshAccessToken = asyncHeandler(async (req, res) => {
 
 });
 
+const changeCurrentPassword = asyncHeandler(async (req, res) => {
+    const { oldPassword, newPassword } = req.body
+
+    const user = await User.findById(req.user?._id)
+
+    const isPasswordCorrect = await User.isPasswordCorrect(oldPassword)
+
+    if (!isPasswordCorrect) {
+        throw new ApiError(400, "Invalid Old Password")
+    }
+    user.password = newPassword
+    await user.save({ validateBeforeSave: false })
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponce(200, {}, "Password Changed Successfully")
+        )
+});
+
+const getCurrentUser = asyncHeandler(async(req, res) => {
+    return res
+    .status(200)
+    .json(200, req.user, "Current User Fetched Successfully")
+    
+});
+
 export {
     registerUser,
     LoginUser,
     LogoutUser,
-    refreshAccessToken
+    refreshAccessToken,
+    changeCurrentPassword,
+    getCurrentUser
 
 };
