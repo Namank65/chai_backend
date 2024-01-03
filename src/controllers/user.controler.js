@@ -248,7 +248,9 @@ const changeCurrentPassword = asyncHeandler(async (req, res) => {
 const getCurrentUser = asyncHeandler(async (req, res) => {
     return res
         .status(200)
-        .json(200, req.user, "Current User Fetched Successfully")
+        .json(
+            new ApiResponce(200, req.user, "Current User Fetched Successfully")
+        )
 
 });
 
