@@ -41,7 +41,7 @@ const registerUser = asyncHeandler(async (req, res) => {
         throw new ApiError(400, "All Field Are Required")
     };
 
-    if (!email.includes("@")) throw new ApiError;
+    if (!email.includes("@")) throw new ApiError(409, "Email Is Not valid, Please Provie A Valid Email Adress");
 
 
     const exestingUser = await User.findOne({
